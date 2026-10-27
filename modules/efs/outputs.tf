@@ -10,7 +10,7 @@ output "file_system_arn" {
 
 output "storage_class_name" {
   description = "Name of the EFS StorageClass"
-  value       = kubernetes_storage_class.efs.metadata[0].name
+  value       = var.create_storage_class ? kubernetes_storage_class.efs[0].metadata[0].name : "efs"
 }
 
 output "efs_csi_role_arn" {
