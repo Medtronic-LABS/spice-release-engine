@@ -15,6 +15,7 @@ Reusable Terraform modules for deploying applications on AWS EKS.
 | **karpenter** | Karpenter node autoscaler |
 | **ingress** | AWS Load Balancer Controller |
 | **argocd** | ArgoCD GitOps platform |
+| **external-secrets** | External Secrets Operator with AWS Secrets Manager and Parameter Store |
 | **monitoring** | Prometheus, Grafana, and Loki |
 
 ## Usage
@@ -27,7 +28,7 @@ module "vpc" {
 }
 ```
 
-Pin to a tag (`?ref=v1.3.0`) for reproducible deployments.
+Pin to a tag (`?ref=v1.4.0`) for reproducible deployments.
 
 ## Versioning
 
@@ -59,6 +60,7 @@ pre-commit install
 | **v1.1.0** | EKS cluster/node security group outputs |
 | **v1.2.0** | RDS PostgreSQL module |
 | **v1.3.0** | Karpenter configurable consolidation policy and timing |
+| **v1.4.0** | External Secrets Operator module with IRSA and ClusterSecretStore |
 
 ## Contributing
 
