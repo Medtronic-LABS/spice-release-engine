@@ -1,0 +1,56 @@
+name: Branch Protection Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  file-guardrails:
+    name: File Type Guardrails
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Block sensitive file types
+        run: |
+          BLOCKED_EXTENSIONS="pem key crt cert p12 pfx jks keystore truststore"
+          FOUND=0
+          for ext in $BLOCKED_EXTENSIONS; do
+            if find . -name "*.${ext}" | grep -q .; then
+              echo "::error::Blocked file type found: *.${ext}"
+              find . -name "*.${ext}"
+              FOUND=1
+            fi
+          done
+          if [ "$FOUND" -eq 1 ]; then
+            exit 1
+          fi
+
+      - name: Block terraform state and var files
+        run: |
+          ERRORS=0
+          for pattern in '*.tfstate' '*.tfstate.*' 'terraform.tfvars' '*.auto.tfvars' 'backend.conf'; do
+            if find . -name "$pattern" | grep -q .; then
+              echo "::error::Blocked file found: $pattern"
+              find . -name "$pattern"
+              ERRORS=1
+            fi
+          done
+          if [ "$ERRORS" -eq 1 ]; then
+            echo ""
+            echo "Use *.tfvars.example for variable templates instead."
+            exit 1
+          fi
+
+      - name: Block large files (>500KB)
+        run: |
+          LARGE=$(find . -type f -size +500k -not -path './.git/*')
+          if [ -n "$LARGE" ]; then
+            echo "::error::Files exceeding 500KB found:"
+            echo "$LARGE"
+            exit 1
+          fi

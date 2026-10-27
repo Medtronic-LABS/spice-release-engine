@@ -1,0 +1,104 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  terraform-validate:
+    name: Terraform Validation
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module:
+          - app-iam
+          - argocd
+          - aurora
+          - efs
+          - eks-addons
+          - eks-cluster
+          - ingress
+          - karpenter
+          - monitoring
+          - vpc
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5"
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive modules/${{ matrix.module }}
+
+      - name: Terraform init
+        run: terraform -chdir=modules/${{ matrix.module }} init -backend=false
+
+      - name: Terraform validate
+        run: terraform -chdir=modules/${{ matrix.module }} validate
+
+  scan-sensitive-patterns:
+    name: Sensitive Pattern Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for tfstate files
+        run: |
+          if find . -name '*.tfstate' -o -name '*.tfstate.*' | grep -q .; then
+            echo "::error::Terraform state files found in repository!"
+            find . -name '*.tfstate' -o -name '*.tfstate.*'
+            exit 1
+          fi
+
+      - name: Check for tfvars files (non-example)
+        run: |
+          if find . -name '*.tfvars' -not -name '*.example' | grep -q .; then
+            echo "::error::Terraform tfvars files found — use .tfvars.example instead"
+            find . -name '*.tfvars' -not -name '*.example'
+            exit 1
+          fi
+
+      - name: Check for hardcoded AWS account IDs
+        run: |
+          if grep -rEn '\b[0-9]{12}\b' --include='*.tf' --include='*.yaml' --include='*.yml' \
+            | grep -ivE '(port|timeout|retention|size|capacity|version|replicas|count|limit|cidr|0\.0\.0\.0)' \
+            | grep -qvE '^\s*#'; then
+            echo "::warning::Possible AWS account IDs found — verify these are not real account IDs"
+            grep -rEn '\b[0-9]{12}\b' --include='*.tf' --include='*.yaml' --include='*.yml' \
+              | grep -ivE '(port|timeout|retention|size|capacity|version|replicas|count|limit|cidr|0\.0\.0\.0)' \
+              | grep -vE '^\s*#' || true
+          fi
+
+      - name: Check for private keys
+        run: |
+          if grep -rln 'BEGIN.*PRIVATE KEY' .; then
+            echo "::error::Private key files found in repository!"
+            grep -rln 'BEGIN.*PRIVATE KEY' .
+            exit 1
+          fi
+
+      - name: Check for .env files
+        run: |
+          if find . -name '.env' -o -name '.env.*' ! -name '.env.example' | grep -q .; then
+            echo "::error::Environment files with potential secrets found!"
+            find . -name '.env' -o -name '.env.*' ! -name '.env.example'
+            exit 1
+          fi

@@ -1,0 +1,43 @@
+title = "spice-release-engine gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  '''\.gitleaks\.toml$''',
+  '''\.gitignore$''',
+]
+
+[[rules]]
+id = "aws-account-id"
+description = "AWS Account ID"
+regex = '''(?i)(account[_-]?id|aws[_-]?account)\s*[:=]\s*["']?\d{12}["']?'''
+tags = ["aws", "account"]
+
+[[rules]]
+id = "terraform-state-secrets"
+description = "Terraform state file content"
+regex = '''\"sensitive_attributes\"'''
+tags = ["terraform", "state"]
+paths = ['''\.tfstate''']
+
+[[rules]]
+id = "kubernetes-token"
+description = "Kubernetes bearer token"
+regex = '''(?i)(bearer|token)\s*[:=]\s*["']?[A-Za-z0-9\-._~+/]+=*["']?'''
+tags = ["kubernetes", "token"]
+
+[[rules]]
+id = "database-connection-string"
+description = "Database connection string with credentials"
+regex = '''(?i)(postgres|mysql|mongodb|redis)://[^:]+:[^@]+@'''
+tags = ["database", "connection"]
+
+[[rules]]
+id = "hardcoded-password-in-tf"
+description = "Hardcoded password in Terraform (not a variable reference or placeholder)"
+regex = '''(?i)(password|secret|token)\s*=\s*"(?!REDACTED|CHANGEME|var\.|local\.|data\.)[^"]{8,}"'''
+tags = ["terraform", "password"]
+paths = ['''\.tf$''']

@@ -1,0 +1,60 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfplan
+tfplan
+
+# Terraform variable files that may contain secrets
+*.auto.tfvars
+terraform.tfvars
+*.tfvars
+!*.tfvars.example
+
+# Backend config (contains bucket names, regions)
+backend.conf
+backend.hcl
+
+# Credentials and secrets
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+id_rsa
+id_ed25519
+*.pub
+
+# AWS
+.aws/
+credentials
+aws-credentials*
+
+# Kubeconfig
+kubeconfig*
+.kube/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
