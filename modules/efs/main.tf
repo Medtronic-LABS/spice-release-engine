@@ -82,6 +82,8 @@ data "aws_eks_addon_version" "efs_csi" {
 }
 
 resource "kubernetes_storage_class" "efs" {
+  count = var.create_storage_class ? 1 : 0
+
   metadata {
     name = "efs"
   }

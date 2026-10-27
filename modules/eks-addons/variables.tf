@@ -13,6 +13,12 @@ variable "oidc_provider_arn" {
   type        = string
 }
 
+variable "create_storage_class" {
+  description = "Create the gp3 StorageClass (disable for private clusters where K8s API is unreachable from Terraform)"
+  type        = bool
+  default     = true
+}
+
 variable "tags" {
   description = "Tags to apply to all resources"
   type        = map(string)

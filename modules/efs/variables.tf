@@ -40,6 +40,12 @@ variable "transition_to_ia" {
   default     = "AFTER_30_DAYS"
 }
 
+variable "create_storage_class" {
+  description = "Create the EFS StorageClass (disable for private clusters where K8s API is unreachable from Terraform)"
+  type        = bool
+  default     = true
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)
