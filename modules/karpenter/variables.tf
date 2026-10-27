@@ -59,6 +59,18 @@ variable "memory_limit" {
   default     = "256Gi"
 }
 
+variable "consolidation_policy" {
+  description = "Karpenter consolidation policy: WhenEmpty or WhenEmptyOrUnderutilized"
+  type        = string
+  default     = "WhenEmptyOrUnderutilized"
+}
+
+variable "consolidate_after" {
+  description = "Duration to wait before consolidating underutilized nodes (e.g. 1m, 5m, 30s)"
+  type        = string
+  default     = "1m"
+}
+
 variable "project" {
   description = "Project name for SCP-compliant tagging"
   type        = string

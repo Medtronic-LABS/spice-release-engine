@@ -149,8 +149,8 @@ resource "kubectl_manifest" "node_pool" {
         memory = var.memory_limit
       }
       disruption = {
-        consolidationPolicy = "WhenEmptyOrUnderutilized"
-        consolidateAfter    = "1m"
+        consolidationPolicy = var.consolidation_policy
+        consolidateAfter    = var.consolidate_after
       }
     }
   })
