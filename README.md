@@ -10,7 +10,7 @@ Reusable Terraform modules for deploying applications on AWS EKS.
 | **eks-cluster** | EKS cluster with managed bootstrap node group |
 | **eks-addons** | EKS managed addons (CoreDNS, kube-proxy, VPC-CNI) |
 | **efs** | EFS filesystem with CSI driver and StorageClass |
-| **aurora** | Aurora Serverless v2 PostgreSQL |
+| **rds-postgres** | Standard RDS PostgreSQL with gp3, encryption, Performance Insights |
 | **app-iam** | Application IAM roles with IRSA |
 | **karpenter** | Karpenter node autoscaler |
 | **ingress** | AWS Load Balancer Controller |
@@ -27,7 +27,7 @@ module "vpc" {
 }
 ```
 
-Pin to a tag (`?ref=v1.0.0`) for reproducible deployments.
+Pin to a tag (`?ref=v1.3.0`) for reproducible deployments.
 
 ## Versioning
 
@@ -50,6 +50,15 @@ Setup:
 pip install pre-commit
 pre-commit install
 ```
+
+## Releases
+
+| Tag | Changes |
+|-----|---------|
+| **v1.0.0** | Initial release — all base modules |
+| **v1.1.0** | EKS cluster/node security group outputs |
+| **v1.2.0** | RDS PostgreSQL module |
+| **v1.3.0** | Karpenter configurable consolidation policy and timing |
 
 ## Contributing
 
