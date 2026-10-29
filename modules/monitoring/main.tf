@@ -45,7 +45,7 @@ resource "helm_release" "prometheus" {
         adminPassword = var.grafana_admin_password
         persistence = {
           enabled          = var.grafana_storage_size != ""
-          storageClassName = var.storage_class
+          storageClassName = var.grafana_storage_class != "" ? var.grafana_storage_class : var.storage_class
           size             = var.grafana_storage_size != "" ? var.grafana_storage_size : "10Gi"
         }
         service = {

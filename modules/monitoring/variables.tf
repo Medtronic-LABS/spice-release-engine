@@ -77,6 +77,12 @@ variable "grafana_admin_password" {
   default     = "CHANGEME"
 }
 
+variable "grafana_storage_class" {
+  description = "Storage class for Grafana PVC. Defaults to storage_class if empty."
+  type        = string
+  default     = ""
+}
+
 variable "grafana_storage_size" {
   description = "Persistent volume size for Grafana. Empty string disables persistence."
   type        = string
