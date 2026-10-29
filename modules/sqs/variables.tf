@@ -1,6 +1,30 @@
 variable "queue_name" {
-  description = "Name of the SQS queue"
+  description = "Name of the SQS queue (without .fifo suffix — added automatically when fifo_queue is true)"
   type        = string
+}
+
+variable "fifo_queue" {
+  description = "Enable FIFO queue"
+  type        = bool
+  default     = false
+}
+
+variable "content_based_deduplication" {
+  description = "Enable content-based deduplication for FIFO queues"
+  type        = bool
+  default     = true
+}
+
+variable "deduplication_scope" {
+  description = "Deduplication scope for FIFO: messageGroup or queue"
+  type        = string
+  default     = "queue"
+}
+
+variable "fifo_throughput_limit" {
+  description = "FIFO throughput limit: perQueue or perMessageGroupId"
+  type        = string
+  default     = "perQueue"
 }
 
 variable "visibility_timeout" {

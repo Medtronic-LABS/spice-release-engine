@@ -64,6 +64,12 @@ variable "ingress_annotations" {
   default     = {}
 }
 
+variable "ingress_group_name" {
+  description = "ALB ingress group name. All ingresses sharing the same group use the same ALB."
+  type        = string
+  default     = "spice-argocd"
+}
+
 variable "certificate_arn" {
   description = "ACM certificate ARN for ArgoCD HTTPS ingress. Empty uses HTTP only."
   type        = string

@@ -34,7 +34,7 @@ resource "helm_release" "this" {
             {
               "alb.ingress.kubernetes.io/scheme"       = "internet-facing"
               "alb.ingress.kubernetes.io/target-type"   = "ip"
-              "alb.ingress.kubernetes.io/group.name"    = "spice-argocd"
+              "alb.ingress.kubernetes.io/group.name"    = var.ingress_group_name
               "alb.ingress.kubernetes.io/backend-protocol" = "HTTP"
               "alb.ingress.kubernetes.io/listen-ports"  = var.certificate_arn != "" ? "[{\"HTTPS\":443},{\"HTTP\":80}]" : "[{\"HTTP\":80}]"
               "alb.ingress.kubernetes.io/success-codes" = "200,302"

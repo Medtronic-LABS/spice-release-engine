@@ -58,7 +58,7 @@ resource "helm_release" "prometheus" {
             {
               "alb.ingress.kubernetes.io/scheme"      = "internet-facing"
               "alb.ingress.kubernetes.io/target-type"  = "ip"
-              "alb.ingress.kubernetes.io/group.name"   = "spice-monitoring"
+              "alb.ingress.kubernetes.io/group.name"   = var.grafana_ingress_group_name
               "alb.ingress.kubernetes.io/listen-ports"  = var.grafana_certificate_arn != "" ? "[{\"HTTPS\":443},{\"HTTP\":80}]" : "[{\"HTTP\":80}]"
               "alb.ingress.kubernetes.io/success-codes" = "200,302"
             },
@@ -70,7 +70,7 @@ resource "helm_release" "prometheus" {
             var.grafana_ingress_annotations,
           )
           hosts = var.grafana_domain != "" ? [var.grafana_domain] : []
-          path  = "/*"
+          path  = "/"
         }
         additionalDataSources = var.loki_enabled ? [
           {
@@ -133,8 +133,8 @@ resource "helm_release" "loki" {
       singleBinary = {
         replicas = 1
         persistence = {
-          enabled          = var.loki_storage_size != ""
-          storageClassName = var.storage_class
+          enabled      = var.loki_storage_size != ""
+          storageClass = var.storage_class
           size             = var.loki_storage_size != "" ? var.loki_storage_size : "10Gi"
         }
       }

@@ -107,6 +107,12 @@ variable "grafana_ingress_annotations" {
   default     = {}
 }
 
+variable "grafana_ingress_group_name" {
+  description = "ALB ingress group name for Grafana. All ingresses sharing the same group use the same ALB."
+  type        = string
+  default     = "spice-monitoring"
+}
+
 variable "grafana_certificate_arn" {
   description = "ACM certificate ARN for Grafana HTTPS ingress. Empty uses HTTP only."
   type        = string
