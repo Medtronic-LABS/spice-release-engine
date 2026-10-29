@@ -159,6 +159,12 @@ variable "loki_version" {
   default     = "6.24.1"
 }
 
+variable "loki_retention" {
+  description = "Loki log retention period (e.g. 360h for 15 days). Empty string disables retention."
+  type        = string
+  default     = ""
+}
+
 variable "loki_storage_size" {
   description = "Persistent volume size for Loki. Empty string disables persistence."
   type        = string

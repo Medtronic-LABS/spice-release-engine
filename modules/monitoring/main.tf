@@ -107,29 +107,41 @@ resource "helm_release" "loki" {
   values = [
     yamlencode({
       deploymentMode = "SingleBinary"
-      loki = {
-        auth_enabled = false
-        commonConfig = {
-          replication_factor = 1
-        }
-        storage = {
-          type = "filesystem"
-        }
-        schemaConfig = {
-          configs = [
-            {
-              from         = "2024-01-01"
-              store        = "tsdb"
-              object_store = "filesystem"
-              schema       = "v13"
-              index = {
-                prefix = "index_"
-                period = "24h"
+      loki = merge(
+        {
+          auth_enabled = false
+          commonConfig = {
+            replication_factor = 1
+          }
+          storage = {
+            type = "filesystem"
+          }
+          schemaConfig = {
+            configs = [
+              {
+                from         = "2024-01-01"
+                store        = "tsdb"
+                object_store = "filesystem"
+                schema       = "v13"
+                index = {
+                  prefix = "index_"
+                  period = "24h"
+                }
               }
-            }
-          ]
-        }
-      }
+            ]
+          }
+        },
+        var.loki_retention != "" ? {
+          limits_config = {
+            retention_period = var.loki_retention
+          }
+          compactor = {
+            retention_enabled = true
+            working_directory = "/var/loki/compactor"
+            delete_request_store = "filesystem"
+          }
+        } : {}
+      )
       singleBinary = {
         replicas = 1
         persistence = {
