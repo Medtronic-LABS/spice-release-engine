@@ -21,8 +21,8 @@ resource "helm_release" "prometheus" {
     yamlencode({
       prometheus = {
         prometheusSpec = {
-          replicas               = var.prometheus_replicas
-          retention              = var.prometheus_retention
+          replicas  = var.prometheus_replicas
+          retention = var.prometheus_retention
           storageSpec = var.prometheus_storage_size != "" ? {
             volumeClaimTemplate = {
               spec = {
@@ -36,12 +36,13 @@ resource "helm_release" "prometheus" {
               }
             }
           } : {}
-          resources = var.prometheus_resources
+          enableRemoteWriteReceiver = var.enable_remote_write_receiver
+          resources                 = var.prometheus_resources
         }
       }
       grafana = {
-        enabled  = var.grafana_enabled
-        replicas = var.grafana_replicas
+        enabled       = var.grafana_enabled
+        replicas      = var.grafana_replicas
         adminPassword = var.grafana_admin_password
         persistence = {
           enabled          = var.grafana_storage_size != ""
@@ -56,16 +57,16 @@ resource "helm_release" "prometheus" {
           ingressClassName = var.ingress_class_name
           annotations = merge(
             {
-              "alb.ingress.kubernetes.io/scheme"      = "internet-facing"
-              "alb.ingress.kubernetes.io/target-type"  = "ip"
-              "alb.ingress.kubernetes.io/group.name"   = var.grafana_ingress_group_name
+              "alb.ingress.kubernetes.io/scheme"        = "internet-facing"
+              "alb.ingress.kubernetes.io/target-type"   = "ip"
+              "alb.ingress.kubernetes.io/group.name"    = var.grafana_ingress_group_name
               "alb.ingress.kubernetes.io/listen-ports"  = var.grafana_certificate_arn != "" ? "[{\"HTTPS\":443},{\"HTTP\":80}]" : "[{\"HTTP\":80}]"
               "alb.ingress.kubernetes.io/success-codes" = "200,302"
             },
             var.grafana_certificate_arn != "" ? {
               "alb.ingress.kubernetes.io/ssl-redirect"    = "443"
-              "alb.ingress.kubernetes.io/certificate-arn"  = var.grafana_certificate_arn
-              "alb.ingress.kubernetes.io/ssl-policy"       = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+              "alb.ingress.kubernetes.io/certificate-arn" = var.grafana_certificate_arn
+              "alb.ingress.kubernetes.io/ssl-policy"      = "ELBSecurityPolicy-TLS13-1-2-2021-06"
             } : {},
             var.grafana_ingress_annotations,
           )
@@ -136,8 +137,8 @@ resource "helm_release" "loki" {
             retention_period = var.loki_retention
           }
           compactor = {
-            retention_enabled = true
-            working_directory = "/var/loki/compactor"
+            retention_enabled    = true
+            working_directory    = "/var/loki/compactor"
             delete_request_store = "filesystem"
           }
         } : {}
@@ -147,15 +148,15 @@ resource "helm_release" "loki" {
         persistence = {
           enabled      = var.loki_storage_size != ""
           storageClass = var.storage_class
-          size             = var.loki_storage_size != "" ? var.loki_storage_size : "10Gi"
+          size         = var.loki_storage_size != "" ? var.loki_storage_size : "10Gi"
         }
       }
       gateway = {
         enabled = true
       }
-      read      = { replicas = 0 }
-      write     = { replicas = 0 }
-      backend   = { replicas = 0 }
+      read         = { replicas = 0 }
+      write        = { replicas = 0 }
+      backend      = { replicas = 0 }
       chunksCache  = { enabled = false }
       resultsCache = { enabled = false }
     })

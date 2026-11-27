@@ -1,6 +1,6 @@
 resource "aws_efs_file_system" "this" {
-  creation_token = "${var.cluster_name}-efs"
-  encrypted      = true
+  creation_token  = "${var.cluster_name}-efs"
+  encrypted       = true
   throughput_mode = var.throughput_mode
 
   lifecycle_policy {
@@ -64,10 +64,10 @@ module "efs_csi_irsa" {
 }
 
 resource "aws_eks_addon" "efs_csi" {
-  cluster_name             = var.cluster_name
-  addon_name               = "aws-efs-csi-driver"
-  addon_version            = data.aws_eks_addon_version.efs_csi.version
-  service_account_role_arn = module.efs_csi_irsa.iam_role_arn
+  cluster_name                = var.cluster_name
+  addon_name                  = "aws-efs-csi-driver"
+  addon_version               = data.aws_eks_addon_version.efs_csi.version
+  service_account_role_arn    = module.efs_csi_irsa.iam_role_arn
   resolve_conflicts_on_create = "OVERWRITE"
 
   tags = var.tags

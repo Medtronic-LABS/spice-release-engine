@@ -21,7 +21,7 @@ variable "prometheus_storage_class" {
 variable "prometheus_stack_version" {
   description = "kube-prometheus-stack Helm chart version"
   type        = string
-  default     = "68.4.5"
+  default     = "94.1.0"
 }
 
 variable "prometheus_replicas" {
@@ -54,6 +54,12 @@ variable "prometheus_resources" {
       memory = "2Gi"
     }
   }
+}
+
+variable "enable_remote_write_receiver" {
+  description = "Enable Prometheus remote write receiver endpoint. Required for Tempo metrics generator to push span metrics."
+  type        = bool
+  default     = false
 }
 
 # --- Grafana ---
@@ -156,7 +162,7 @@ variable "loki_enabled" {
 variable "loki_version" {
   description = "Loki Helm chart version"
   type        = string
-  default     = "6.24.1"
+  default     = "7.7.0"
 }
 
 variable "loki_retention" {
@@ -174,7 +180,7 @@ variable "loki_storage_size" {
 variable "promtail_version" {
   description = "Promtail Helm chart version"
   type        = string
-  default     = "6.16.6"
+  default     = "6.17.1"
 }
 
 variable "tags" {

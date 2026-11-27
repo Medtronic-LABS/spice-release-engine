@@ -26,7 +26,7 @@ variable "aws_region" {
 variable "karpenter_version" {
   description = "Karpenter Helm chart version"
   type        = string
-  default     = "1.14.1"
+  default     = "1.15.3"
 }
 
 variable "karpenter_replicas" {

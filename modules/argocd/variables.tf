@@ -7,7 +7,7 @@ variable "namespace" {
 variable "argocd_version" {
   description = "ArgoCD Helm chart version"
   type        = string
-  default     = "7.7.16"
+  default     = "10.20.0"
 }
 
 variable "argocd_domain" {
@@ -80,6 +80,12 @@ variable "server_insecure" {
   description = "Run ArgoCD server in insecure mode (no TLS). Required when TLS is terminated at the load balancer."
   type        = bool
   default     = true
+}
+
+variable "network_policy_create" {
+  description = "Create NetworkPolicy resources. Set to false if the cluster does not have a NetworkPolicy controller."
+  type        = bool
+  default     = false
 }
 
 variable "tags" {

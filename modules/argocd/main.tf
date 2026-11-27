@@ -21,6 +21,9 @@ resource "helm_release" "this" {
     yamlencode({
       global = {
         domain = var.argocd_domain
+        networkPolicy = {
+          create = var.network_policy_create
+        }
       }
       server = {
         replicas = var.server_replicas
@@ -32,15 +35,15 @@ resource "helm_release" "this" {
           ingressClassName = var.ingress_class_name
           annotations = merge(
             {
-              "alb.ingress.kubernetes.io/scheme"       = "internet-facing"
-              "alb.ingress.kubernetes.io/target-type"   = "ip"
-              "alb.ingress.kubernetes.io/group.name"    = var.ingress_group_name
+              "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
+              "alb.ingress.kubernetes.io/target-type"      = "ip"
+              "alb.ingress.kubernetes.io/group.name"       = var.ingress_group_name
               "alb.ingress.kubernetes.io/backend-protocol" = "HTTP"
-              "alb.ingress.kubernetes.io/listen-ports"  = var.certificate_arn != "" ? "[{\"HTTPS\":443},{\"HTTP\":80}]" : "[{\"HTTP\":80}]"
-              "alb.ingress.kubernetes.io/success-codes" = "200,302"
+              "alb.ingress.kubernetes.io/listen-ports"     = var.certificate_arn != "" ? "[{\"HTTPS\":443},{\"HTTP\":80}]" : "[{\"HTTP\":80}]"
+              "alb.ingress.kubernetes.io/success-codes"    = "200,302"
             },
             var.certificate_arn != "" ? {
-              "alb.ingress.kubernetes.io/ssl-redirect"   = "443"
+              "alb.ingress.kubernetes.io/ssl-redirect"    = "443"
               "alb.ingress.kubernetes.io/certificate-arn" = var.certificate_arn
               "alb.ingress.kubernetes.io/ssl-policy"      = "ELBSecurityPolicy-TLS13-1-2-2021-06"
             } : {},
